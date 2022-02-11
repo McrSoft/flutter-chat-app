@@ -1,8 +1,12 @@
+import 'package:chatapp/helpers/mostrar_alerta.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:chatapp/services/auth_services.dart';
 import 'package:chatapp/widgets/buton_azul.dart';
 import 'package:chatapp/widgets/custom_input.dart';
 import 'package:chatapp/widgets/custom_label.dart';
 import 'package:chatapp/widgets/custom_logo.dart';
-import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -47,6 +51,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -66,10 +72,22 @@ class __FormState extends State<_Form> {
           ),
           ButonAzul(
               text: 'Ingrese',
-              onPressed: () {
-                print(emailCtrl.text);
-                print(passCtrl.text);
-              })
+              onPressed: authService.autenticando
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
+
+                      final loginOk = await authService.login(
+                          emailCtrl.text.trim(), passCtrl.text.trim());
+
+                      if (loginOk) {
+                        // conecetar al socket serice
+                        Navigator.pushReplacementNamed(context, 'usuarios');
+                      } else {
+                        mostrarAlerta(context, 'Login incorrecto',
+                            'Revise informacion por favor!');
+                      }
+                    })
         ],
       ),
     );

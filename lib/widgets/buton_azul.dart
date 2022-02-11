@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ButonAzul extends StatelessWidget {
   final String text;
-  final Function() onPressed;
+  final Function()? onPressed;
 
   final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
     onPrimary: Colors.white,
